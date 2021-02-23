@@ -1,2 +1,2 @@
-def Dqn():
-    return 'Response from the brain of ai'
+class Dqn:
+    Dqn.brain = 'Response from the brain of ai'
