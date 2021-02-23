@@ -34,6 +34,21 @@ action2rotation = [0,20,-20,-10] # action = 0 => no rotation, action = 1 => rota
 last_reward = 0 # initializing the last reward
 scores = [] # initializing the mean score curve (sliding window of the rewards) with respect to time
 
+# Initializing the map
+first_update = True # using this trick to initialize the map only once
+def init():
+    global sand # sand is an array that has as many cells as our graphic interface has pixels. Each cell has a one if there is sand, 0 otherwise.
+    global goal_x # x-coordinate of the goal (where the car has to go, that is the airport or the downtown)
+    global goal_y # y-coordinate of the goal (where the car has to go, that is the airport or the downtown)
+    sand = np.zeros((longueur,largeur)) # initializing the sand array with only zeros
+    goal_x = 20 # the goal to reach is at the upper left of the map (the x-coordinate is 20 and not 0 because the car gets bad reward if it touches the wall)
+    goal_y = largeur - 20 # the goal to reach is at the upper left of the map (y-coordinate)
+    first_update = False # trick to initialize the map only once
+
+
+# Initializing the last distance
+last_distance = 0
+
 
 
 
