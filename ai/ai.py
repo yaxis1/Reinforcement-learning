@@ -64,3 +64,10 @@ class Dqn():
     def select_action(self, state):
         #Softmax - distribution of probabilities for Q values (sum up to 1)/ if argmax it takes max of Q values (not experimenting other q values)
         probs = F.softmax(self.model(Variable(state, volatile = True))*7) #T =7 #No gradient here
+        #Higher the T value more confident the action
+        action = probs.multinomial() 
+        return action.data[0,0]
+
+    def learn(self, batch_state, batch_next_state, batch_reward, batch_action):
+        # Markov's decision process
+        outputs = self.model()
