@@ -42,7 +42,8 @@ class ReplayMemory(object): #From the memory of last 100 events we take batches 
             del self.memory[0]
 
     def sample(self, batch_size): #Sample from the memory( last 100 events)
-        samples = self.
+        
+        samples = zip(*random.sample(self.memory, batch_size)) # zipping random samples from memory of fixed batch size 
 
     
 
