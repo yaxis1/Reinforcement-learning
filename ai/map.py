@@ -17,7 +17,6 @@ from kivy.clock import Clock
 # Importing the Dqn object from Artificial Intelligence in ai.py
 from ai import Dqn
 
-Dqn.brain
 
 # Adding this line if we don't want the right click to put a red point
 Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
@@ -72,23 +71,23 @@ class Car(Widget):
     signal2 = NumericProperty(0) # initializing the signal received by sensor 2
     signal3 = NumericProperty(0) # initializing the signal received by sensor 3
 
-        def move(self, rotation):
-            self.pos = Vector(*self.velocity) + self.pos # updating the position of the car according to its last position and velocity
-            self.rotation = rotation # getting the rotation of the car
-            self.angle = self.angle + self.rotation # updating the angle
-            #If the car rotates then the sensors are rotated as well
-            self.sensor1 = Vector(30, 0).rotate(self.angle) + self.pos # updating the position of sensor 1
-            self.sensor2 = Vector(30, 0).rotate((self.angle+30)%360) + self.pos # updating the position of sensor 2
-            self.sensor3 = Vector(30, 0).rotate((self.angle-30)%360) + self.pos # updating the position of sensor 3
-            self.signal1 = int(np.sum(sand[int(self.sensor1_x)-10:int(self.sensor1_x)+10, int(self.sensor1_y)-10:int(self.sensor1_y)+10]))/400. #Sum number of 1's in the pixels # getting the signal received by sensor 1 (density of sand around sensor 1)
-            self.signal2 = int(np.sum(sand[int(self.sensor2_x)-10:int(self.sensor2_x)+10, int(self.sensor2_y)-10:int(self.sensor2_y)+10]))/400. # getting the signal received by sensor 2 (density of sand around sensor 2)
-            self.signal3 = int(np.sum(sand[int(self.sensor3_x)-10:int(self.sensor3_x)+10, int(self.sensor3_y)-10:int(self.sensor3_y)+10]))/400. # getting the signal received by sensor 3 (density of sand around sensor 3)
-            if self.sensor1_x > longueur-10 or self.sensor1_x<10 or self.sensor1_y>largeur-10 or self.sensor1_y<10: # if sensor 1 is out of the map (the car is facing one edge of the map)
-                self.signal1 = 1. # sensor 1 detects full sand
-            if self.sensor2_x > longueur-10 or self.sensor2_x<10 or self.sensor2_y>largeur-10 or self.sensor2_y<10: # if sensor 2 is out of the map (the car is facing one edge of the map)
-                self.signal2 = 1. # sensor 2 detects full sand
-            if self.sensor3_x > longueur-10 or self.sensor3_x<10 or self.sensor3_y>largeur-10 or self.sensor3_y<10: # if sensor 3 is out of the map (the car is facing one edge of the map)
-                self.signal3 = 1. # sensor 3 detects full sand
+    def move(self, rotation):
+        self.pos = Vector(*self.velocity) + self.pos # updating the position of the car according to its last position and velocity
+        self.rotation = rotation # getting the rotation of the car
+        self.angle = self.angle + self.rotation # updating the angle
+        #If the car rotates then the sensors are rotated as well
+        self.sensor1 = Vector(30, 0).rotate(self.angle) + self.pos # updating the position of sensor 1
+        self.sensor2 = Vector(30, 0).rotate((self.angle+30)%360) + self.pos # updating the position of sensor 2
+        self.sensor3 = Vector(30, 0).rotate((self.angle-30)%360) + self.pos # updating the position of sensor 3
+        self.signal1 = int(np.sum(sand[int(self.sensor1_x)-10:int(self.sensor1_x)+10, int(self.sensor1_y)-10:int(self.sensor1_y)+10]))/400. #Sum number of 1's in the pixels # getting the signal received by sensor 1 (density of sand around sensor 1)
+        self.signal2 = int(np.sum(sand[int(self.sensor2_x)-10:int(self.sensor2_x)+10, int(self.sensor2_y)-10:int(self.sensor2_y)+10]))/400. # getting the signal received by sensor 2 (density of sand around sensor 2)
+        self.signal3 = int(np.sum(sand[int(self.sensor3_x)-10:int(self.sensor3_x)+10, int(self.sensor3_y)-10:int(self.sensor3_y)+10]))/400. # getting the signal received by sensor 3 (density of sand around sensor 3)
+        if self.sensor1_x > longueur-10 or self.sensor1_x<10 or self.sensor1_y>largeur-10 or self.sensor1_y<10: # if sensor 1 is out of the map (the car is facing one edge of the map)
+            self.signal1 = 1. # sensor 1 detects full sand
+        if self.sensor2_x > longueur-10 or self.sensor2_x<10 or self.sensor2_y>largeur-10 or self.sensor2_y<10: # if sensor 2 is out of the map (the car is facing one edge of the map)
+            self.signal2 = 1. # sensor 2 detects full sand
+        if self.sensor3_x > longueur-10 or self.sensor3_x<10 or self.sensor3_y>largeur-10 or self.sensor3_y<10: # if sensor 3 is out of the map (the car is facing one edge of the map)
+            self.signal3 = 1. # sensor 3 detects full sand
 
 class Game(Widget):
 
