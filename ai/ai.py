@@ -79,4 +79,9 @@ class Dqn():
         td_loss.backward(retain_variables = True) #Back propogation
         self.optimizer.step() # Updating weights with back propogation
 
-
+    def update(self, reward, new_signal):
+        # This function is imported in the map.py under Game class
+        # Parameters are called from update function of Game class
+        new_state = torch.Tensor(new_signal).float().unsqueeze(0) #Converting newsignal to tensor and creating a fake dimension
+        # Updating memory with using the push function that we created earlier
+        self.memory.push((self.last_state, new_state, torch.LongTensor([int(self.last_action)]), torch.Tensor([self.last_reward ]))) #Converting last_action - 0,1,2 to tensor
