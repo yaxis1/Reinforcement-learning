@@ -1,6 +1,6 @@
 #AI for the car
 
-#Importing libraries
+# Importing libraries
 import numpy as np #Working with arrays
 import random #taking random samples
 import os #load and save the model
@@ -9,9 +9,9 @@ import torch.nn as nn#neural network
 import torch.nn.functional as F #functions for nn 
 import torch.optim as optim #optimizer for stochastic gradient descent
 import torch.autograd as autograd 
-from torch.autograd import Variable #convergence for tensors to gradient
+from torch.autograd import Variable #convert for tensors to gradient
 
-#Creating the architecture of the Neural network
+# Creating the architecture of the Neural network
 
 class Network(nn.Module):
     #Inheriting from nn.Module
@@ -42,8 +42,17 @@ class ReplayMemory(object): #From the memory of last 100 events we take batches 
             del self.memory[0]
 
     def sample(self, batch_size): #Sample from the memory( last 100 events)
-        
+        #while event = (last state, new state, last action, last reward)
+        #zip(*random.sample()) - zips the tuples in the format (state1,state2) (act1,act2) (r1,r2)
         samples = zip(*random.sample(self.memory, batch_size)) # zipping random samples from memory of fixed batch size 
+        return map(lambda x: Variable(torch.cat(x, 0)),samples) #concatnate samples to first dimention then convert them to torch variable(tensor and gradient)
 
-    
+# Implementing Deep Q Learning
 
+class Dqn(): 
+
+    def __init__(self, input_size, nb_action, gamma): # Takes Network class and ReplayMemory
+        self.gamma = gamma
+        self.reward_window = []  # Mean of last 100 rewards changing with time
+        self.model = Network(input_size, nb_action)# The Neural Network
+        self.memory = ReplayMemory()
