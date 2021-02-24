@@ -73,4 +73,10 @@ class Dqn():
         outputs = self.model(batch_state).gather(1, batch_action).unsqueeze(1).squeeze(1) 
         # Gathering action that was chosen #1 fake dimension of action #squeezing since we don't need a batch but tensor
         next_outputs = self.model(batch_next_state).detach().max(1)[0] #max of q values of next state
-        target = self.gamma
+        target = self.gamma*next_outputs + batch_reward 
+        td_loss = F.smooth_l1_loss(outputs,target) # Loss function
+        self.optimizer.zero_grad() # Reinitialize at each iteration of loop
+        td_loss.backward(retain_variables = True) #Back propogation
+        self.optimizer.step() # Updating weights with back propogation
+
+
