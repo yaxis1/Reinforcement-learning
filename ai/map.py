@@ -158,6 +158,76 @@ class Game(Widget):
         # Updating the last distance from the car to the goal
         last_distance = distance
 
+# Painting for graphic interface 
+
+class MyPaintWidget(Widget):
+
+    def on_touch_down(self, touch): # putting some sand when we do a left click
+        global length,n_points,last_x,last_y
+        with self.canvas:
+            Color(0.8,0.7,0)
+            d=10.
+            touch.ud['line'] = Line(points = (touch.x, touch.y), width = 10)
+            last_x = int(touch.x)
+            last_y = int(touch.y)
+            n_points = 0
+            length = 0
+            sand[int(touch.x),int(touch.y)] = 1
+
+    def on_touch_move(self, touch): # putting some sand when we move the mouse while pressing left
+        global length,n_points,last_x,last_y
+        if touch.button=='left':
+            touch.ud['line'].points += [touch.x, touch.y]
+            x = int(touch.x)
+            y = int(touch.y)
+            length += np.sqrt(max((x - last_x)**2 + (y - last_y)**2, 2))
+            n_points += 1.
+            density = n_points/(length)
+            touch.ud['line'].width = int(20*density + 1)
+            sand[int(touch.x) - 10 : int(touch.x) + 10, int(touch.y) - 10 : int(touch.y) + 10] = 1
+            last_x = x
+            last_y = y
+
+# API and switches interface 
+
+class CarApp(App):
+
+    def build(self): # building the app
+        parent = Game()
+        parent.serve_car()
+        Clock.schedule_interval(parent.update, 1.0 / 60.0)
+        self.painter = MyPaintWidget()
+        clearbtn = Button(text='clear')
+        savebtn = Button(text='save',pos=(parent.width,0))
+        loadbtn = Button(text='load',pos=(2*parent.width,0))
+        clearbtn.bind(on_release=self.clear_canvas)
+        savebtn.bind(on_release=self.save)
+        loadbtn.bind(on_release=self.load)
+        parent.add_widget(self.painter)
+        parent.add_widget(clearbtn)
+        parent.add_widget(savebtn)
+        parent.add_widget(loadbtn)
+        return parent
+
+    def clear_canvas(self, obj): # clear button
+        global sand
+        self.painter.canvas.clear()
+        sand = np.zeros((longueur,largeur))
+
+    def save(self, obj): # save button
+        print("saving brain...")
+        brain.save()
+        plt.plot(scores)
+        plt.show()
+
+    def load(self, obj): # load button
+        print("loading last saved brain...")
+        brain.load()
+
+# Running the app
+if __name__ == '__main__':
+    CarApp().run()
+
 
 
 

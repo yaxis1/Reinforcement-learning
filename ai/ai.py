@@ -1,2 +1,2 @@
-class Dqn:
-    brain = 'Response from the brain of ai'
+#AI for the car
+#Importing libraries
