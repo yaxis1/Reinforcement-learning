@@ -70,4 +70,7 @@ class Dqn():
 
     def learn(self, batch_state, batch_next_state, batch_reward, batch_action):
         # Markov's decision process
-        outputs = self.model()
+        outputs = self.model(batch_state).gather(1, batch_action).unsqueeze(1).squeeze(1) 
+        # Gathering action that was chosen #1 fake dimension of action #squeezing since we don't need a batch but tensor
+        next_outputs = self.model(batch_next_state).detach().max(1)[0] #max of q values of next state
+        target = self.gamma
