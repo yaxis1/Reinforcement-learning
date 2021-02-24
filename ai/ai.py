@@ -29,4 +29,20 @@ class Network(nn.Module):
         q_values = self.fc2(x) #getting Q values from fc2 that has neural connections from x
         return q_values
 
-#Experience Replay
+# Experience Replay for long term memory
+class ReplayMemory(object): #From the memory of last 100 events we take batches to make next update, move by selecting the next action
+    def __init__(self,capacity): #Future objects 
+        self.capacity = capacity # 100 
+        self.memory = [] #list of memories
+
+    def push(self, event): #append new event to memory and make sure the list is < 100
+        #event = (last state, new state, last action, last reward)
+        self.memory.append(event)
+        if len(self.memory) > self.capacity:
+            del self.memory[0]
+
+    def sample(self, batch_size): #Sample from the memory( last 100 events)
+        samples = self.
+
+    
+
