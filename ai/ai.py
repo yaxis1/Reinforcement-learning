@@ -55,4 +55,12 @@ class Dqn():
         self.gamma = gamma
         self.reward_window = []  # Mean of last 100 rewards changing with time
         self.model = Network(input_size, nb_action)# The Neural Network
-        self.memory = ReplayMemory()
+        self.memory = ReplayMemory(100000) # Number of events
+        self.optimizer = optim.Adam(self.model.parameters(), lr = 0.001) # Connects adam optim to our neural network
+        self.last_state = torch.Tensor(input_size).unsqueeze(0) # 3 signals + 2 orientations => converted to torch vector and additional dimension for batch
+        self.last_action = 0 # action2rotation [0,20,-20]
+        self.last_reward = 0 # -1 or +1 
+    
+    def select_action(self, state):
+        #Softmax - distribution of probabilities for Q values (sum up to 1)/ if argmax it takes max of Q values (not experimenting other q values)
+        probs = F.softmax(self.model(Variable(state, volatile = True))*7) #T =7 #No gradient here
