@@ -12,10 +12,10 @@ import torch.autograd as autograd
 from torch.autograd import Variable #convergence for tensors to gradient
 
 #Creating the architecture of the Neural network
+
 class Network(nn.Module):
     #Inheriting from nn.Module
     def __init__(self, input_size, nb_action):# input_size - 5 : 3 signals + 2 orientations(goal) # nb_action - l,r,f,b
-        
         super(Network, self).__init__() #uses nn.Module
         self.input_size = input_size
         self.nb_action = nb_action
@@ -23,6 +23,10 @@ class Network(nn.Module):
         self.fc1 = nn.Linear(input_size, 30) #-| After a lot of experimenting 30!
         self.fc2 = nn.Linear(30, nb_action) #|-
 
-    def forward(self):
-        #Rectifier activation cz non-linear problem
-        pass
+    def forward(self, state): #Forward propogation using rectifier activation cz non-linear problem and get Q values
+        #Activating hidden neurons
+        x = F.relu(self.fc1(state)) #Rectifier function to activate hidden neuron x
+        q_values = self.fc2(x) #getting Q values from fc2 that has neural connections from x
+        return q_values
+
+#Experience Replay
