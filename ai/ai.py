@@ -56,7 +56,7 @@ class Dqn():
         self.reward_window = []  # Mean of last 100 rewards changing with time
         self.model = Network(input_size, nb_action)# The Neural Network
         self.memory = ReplayMemory(100000) # Number of events
-        self.optimizer = optim.Adam(self.model.parameters(), lr = 0.001) # Connects adam optim to our neural network
+        self.optimizer = optim.Adam(self.model.parameters(), lr = 0.001) # Connects stochastic gradient optim to our neural network
         self.last_state = torch.Tensor(input_size).unsqueeze(0) # 3 signals + 2 orientations => converted to torch vector and additional dimension for batch
         self.last_action = 0 # action2rotation [0,20,-20]
         self.last_reward = 0 # -1 or +1 
@@ -75,7 +75,7 @@ class Dqn():
         next_outputs = self.model(batch_next_state).detach().max(1)[0] #max of q values of next state
         target = self.gamma*next_outputs + batch_reward 
         td_loss = F.smooth_l1_loss(outputs,target) # Loss function
-        self.optimizer.zero_grad() # Reinitialize at each iteration of loop
+        self.optimizer.zero_grad() # Reinitialize stochastic gradient at each iteration of loop
         td_loss.backward(retain_variables = True) #Back propogation
         self.optimizer.step() # Updating weights with back propogation
 
@@ -97,3 +97,21 @@ class Dqn():
         if len(self.reward_window) > 1000:
             del self.reward_window[0] # Rewar window will never get more than 1000 rewards
         return action # Returns action that needs to be implemented in map.py
+
+    def score(self): # Computes mean from reward window
+        return sum(self.reward_window) / (len(self.reward_window)+1) #Making sure denominator is not equal to 0
+    
+    def save(self): # Saving the brain of model
+        torch.save({'state_dict': self.model.state_dict(), 'optimizer': self.optimizer.state_dict}, 
+        'last_brain.pth') # saving model and optimizer used to last_brain.pth
+
+    def load(self): # Loading the brain
+        if os.path.isfile('last_brain.pth'):
+            print("Loading last checkpoint from brain..")
+            checkpoint = torch.load('last_brain.pth')
+            #Updating model and optimizer
+            self.model.load_state_dict(checkpoint['state_dict'])
+            self.optimizer.load_state_dict(checkpoint['optimizer'])
+            print("Brain and optimizer loaded")
+        else:
+            print("No brain found.. :)")
