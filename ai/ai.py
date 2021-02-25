@@ -85,3 +85,15 @@ class Dqn():
         new_state = torch.Tensor(new_signal).float().unsqueeze(0) #Converting newsignal to tensor and creating a fake dimension
         # Updating memory with using the push function that we created earlier
         self.memory.push((self.last_state, new_state, torch.LongTensor([int(self.last_action)]), torch.Tensor([self.last_reward ]))) #Converting last_action - 0,1,2 to tensor
+        action = self.select_action(new_state) # Next step is to choose action
+        if len(self.memory.memory) > 100:  #first memory is object or Replay memory class and 2nd memory is attribute from this class
+            # AI Learns from 100 transitions
+            batch_state, batch_next_state, batch_reward, batch_action = self.memory.sample(100)
+            self.learn(batch_state, batch_next_state, batch_reward, batch_action) # Learning from future objects of LEARN function
+        self.last_action = action # Updated with current action of update function
+        self.last_state = new_state # updating last state with current state
+        self.last_reward = reward # From the map.py  Parameters are called from update function of Game class
+        self.reward_window.append(reward) # Updating reward window of Dqn class
+        if len(self.reward_window) > 1000:
+            del self.reward_window[0] # Rewar window will never get more than 1000 rewards
+        return action # Returns action that needs to be implemented in map.py
