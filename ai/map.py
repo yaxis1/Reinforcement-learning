@@ -18,7 +18,6 @@ from kivy.clock import Clock
 # Importing the Dqn object from Artificial Intelligence in ai.py
 from ai import Dqn
 
-
 # Adding this line if we don't want the right click to put a red point
 Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 
@@ -30,7 +29,7 @@ length = 0 # the length of the last drawing
 
 # Getting our AI, which is called "brain", and that contains our neural network that represents our Q-function
 brain = Dqn(5,4,0.9) # 5 sensors, 4 actions, gama = 0.9
-action2rotation = [0,20,-20,-10] # action = 0 => no rotation, action = 1 => rotate 20 degres, action = 2 => rotate -20 degres, action = 3 => reverse -10 
+action2rotation = [0,20,-20] # action = 0 => no rotation, action = 1 => rotate 20 degres, action = 2 => rotate -20 degres, action = 3 => reverse -10 
 last_reward = 0 # initializing the last reward
 scores = [] # initializing the mean score curve (sliding window of the rewards) with respect to time
 

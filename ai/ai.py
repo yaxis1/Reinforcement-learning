@@ -65,8 +65,13 @@ class Dqn():
         #Softmax - distribution of probabilities for Q values (sum up to 1)/ if argmax it takes max of Q values (not experimenting other q values)
         probs = F.softmax(self.model(Variable(state, volatile = True))*0) #T =7 #No gradient here #AI_OFF
         #Higher the T value more confident the action
-        action = probs.multinomial() 
-        return action.data[0,0]
+
+        m = torch.distributions.Categorical(probs)         
+
+        action = m.sample()
+        
+       # action = probs.multinomial() 
+       # return action.data[0,0]
 
     def learn(self, batch_state, batch_next_state, batch_reward, batch_action):
         # Markov's decision process
@@ -76,7 +81,7 @@ class Dqn():
         target = self.gamma*next_outputs + batch_reward 
         td_loss = F.smooth_l1_loss(outputs,target) # Loss function
         self.optimizer.zero_grad() # Reinitialize stochastic gradient at each iteration of loop
-        td_loss.backward(retain_variables = True) #Back propogation
+        td_loss.backward() #Back propogation
         self.optimizer.step() # Updating weights with back propogation
 
     def update(self, reward, new_signal):
