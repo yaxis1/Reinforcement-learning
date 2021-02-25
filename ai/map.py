@@ -91,10 +91,10 @@ class Car(Widget):
 
 class Game(Widget):
 
-    car = ObjectProperty(None) # getting the car object from our kivy file
-    ball1 = ObjectProperty(None) # getting the sensor 1 object from our kivy file
-    ball2 = ObjectProperty(None) # getting the sensor 2 object from our kivy file
-    ball3 = ObjectProperty(None) # getting the sensor 3 object from our kivy file
+    car = ObjectProperty(None)
+    ball1 = ObjectProperty(None)
+    ball2 = ObjectProperty(None)
+    ball3 = ObjectProperty(None)
 
     def serve_car(self): # starting the car when we launch the application
         self.car.center = self.center # the car will start at the center of the map

@@ -63,7 +63,7 @@ class Dqn():
     
     def select_action(self, state):
         #Softmax - distribution of probabilities for Q values (sum up to 1)/ if argmax it takes max of Q values (not experimenting other q values)
-        probs = F.softmax(self.model(Variable(state, volatile = True))*7) #T =7 #No gradient here
+        probs = F.softmax(self.model(Variable(state, volatile = True))*0) #T =7 #No gradient here #AI_OFF
         #Higher the T value more confident the action
         action = probs.multinomial() 
         return action.data[0,0]
@@ -95,7 +95,7 @@ class Dqn():
         self.last_reward = reward # From the map.py  Parameters are called from update function of Game class
         self.reward_window.append(reward) # Updating reward window of Dqn class
         if len(self.reward_window) > 1000:
-            del self.reward_window[0] # Rewar window will never get more than 1000 rewards
+            del self.reward_window[0] # Reward window will never get more than 1000 rewards
         return action # Returns action that needs to be implemented in map.py
 
     def score(self): # Computes mean from reward window
