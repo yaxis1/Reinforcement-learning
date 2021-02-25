@@ -1,3 +1,4 @@
+# The map
 # Importing the libraries
 import numpy as np
 from random import random, randint
@@ -89,12 +90,20 @@ class Car(Widget):
         if self.sensor3_x > longueur-10 or self.sensor3_x<10 or self.sensor3_y>largeur-10 or self.sensor3_y<10: # if sensor 3 is out of the map (the car is facing one edge of the map)
             self.signal3 = 1. # sensor 3 detects full sand
 
+# Corresponding to classes from car.kv
+class Ball1(Widget):
+    pass 
+class Ball2(Widget): 
+    pass
+class Ball3(Widget): 
+    pass
+
 class Game(Widget):
 
-    car = ObjectProperty(None)
-    ball1 = ObjectProperty(None)
-    ball2 = ObjectProperty(None)
-    ball3 = ObjectProperty(None)
+    car = ObjectProperty(None) # getting the car object from our kivy file
+    ball1 = ObjectProperty(None) # getting the sensor 1 object from our kivy file
+    ball2 = ObjectProperty(None) # getting the sensor 2 object from our kivy file
+    ball3 = ObjectProperty(None) # getting the sensor 3 object from our kivy file
 
     def serve_car(self): # starting the car when we launch the application
         self.car.center = self.center # the car will start at the center of the map
