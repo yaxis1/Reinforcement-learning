@@ -66,22 +66,23 @@ class Dqn():
         probs = F.softmax(self.model(Variable(state, volatile = True))*0) #T =7 #No gradient here #AI_OFF
         #Higher the T value more confident the action
 
-        m = torch.distributions.Categorical(probs)         
+        #m = torch.distributions.Categorical(probs)         
 
-        action = m.sample()
+        #action = m.sample()
         
-       # action = probs.multinomial() 
-       # return action.data[0,0]
+        action = probs.multinomial() 
+        return action.data[0,0]
 
     def learn(self, batch_state, batch_next_state, batch_reward, batch_action):
         # Markov's decision process
-        outputs = self.model(batch_state).gather(1, batch_action).unsqueeze(1).squeeze(1) 
+        outputs = self.model(batch_state).gather(1, batch_action.unsqueeze(1)).squeeze(1) 
         # Gathering action that was chosen #1 fake dimension of action #squeezing since we don't need a batch but tensor
         next_outputs = self.model(batch_next_state).detach().max(1)[0] #max of q values of next state
         target = self.gamma*next_outputs + batch_reward 
         td_loss = F.smooth_l1_loss(outputs,target) # Loss function
         self.optimizer.zero_grad() # Reinitialize stochastic gradient at each iteration of loop
-        td_loss.backward() #Back propogation
+        td_loss.backward(retain_variables = True)
+        #td_loss.backward() #Back propogation
         self.optimizer.step() # Updating weights with back propogation
 
     def update(self, reward, new_signal):
@@ -93,7 +94,7 @@ class Dqn():
         action = self.select_action(new_state) # Next step is to choose action
         if len(self.memory.memory) > 100:  #first memory is object or Replay memory class and 2nd memory is attribute from this class
             # AI Learns from 100 transitions
-            batch_state, batch_next_state, batch_reward, batch_action = self.memory.sample(100)
+            batch_state, batch_next_state, batch_action, batch_reward  = self.memory.sample(100)
             self.learn(batch_state, batch_next_state, batch_reward, batch_action) # Learning from future objects of LEARN function
         self.last_action = action # Updated with current action of update function
         self.last_state = new_state # updating last state with current state
@@ -104,7 +105,7 @@ class Dqn():
         return action # Returns action that needs to be implemented in map.py
 
     def score(self): # Computes mean from reward window
-        return sum(self.reward_window) / (len(self.reward_window)+1) #Making sure denominator is not equal to 0
+        return sum(self.reward_window) / (len(self.reward_window)+1.) #Making sure denominator is not equal to 0
     
     def save(self): # Saving the brain of model
         torch.save({'state_dict': self.model.state_dict(), 'optimizer': self.optimizer.state_dict}, 
